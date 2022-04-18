@@ -1,5 +1,4 @@
 import './App.css';
-import Cards from './Cards.js';
 import { useState, useEffect } from 'react';
 import Tab from './Tab.js';
 
@@ -7,6 +6,8 @@ function App() {
     let [error, setError] = useState(null);
     let [isLoaded, setLoaded] = useState(false);
     let [cards, setCards] = useState([]);
+    let [trigger, setTrigger] = useState(false);
+    let [character, setCharacter] = useState('');
 
     useEffect(() => {
         async function fetchData() {
@@ -17,16 +18,38 @@ function App() {
                 .catch(err => setError(err));
         }
         fetchData();
-    })
+    }, [])
+    let cardTab = (card) => {
+        setTrigger(true);
+        setCharacter(card);
+    }
 
 
     return (
         <div className="App">
+        {trigger && <Tab 
+            trigger={ trigger }
+            setTrigger={ setTrigger} 
+            character={ character }
+            setCharacter={ setCharacter }
+            />}
+        <div className="cards-body">
         {cards.length > 0 
             && cards.map((card) => 
-                <Cards character={ card } />)
-        } 
-        <Tab />
+                {
+                    return (
+                        <div 
+                        className="card-tab">
+                        <img
+                        onClick={ () => cardTab(card) }
+                        id={ card.name }
+                        src={ card.image } />
+                        <p>{ card.name }</p>
+                        </div>
+                    )
+                })
+        }
+        </div>
         </div>
     );
 }
